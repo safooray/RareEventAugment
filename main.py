@@ -30,7 +30,7 @@ def display_results(precision_recall_fscore_support):
 
 """### Load Data"""
 
-data_path = 'Data/processminer-rare-event-detection-data-augmentation.xlsx'
+data_path = 'data/processminer-rare-event-detection-data-augmentation.xlsx'
 data_file = pd.ExcelFile(data_path)
 data = pd.read_excel(data_file, 'data-(b)-4-min-ahead-conse-rmvd')
 
