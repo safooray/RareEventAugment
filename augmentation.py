@@ -16,7 +16,7 @@ def noise_pos_augment(x, y):
 
 def resample_augment(x, y):
     x_pos = x[y == 1]
-    frac = x.shape[0] // x_pos.shape[0] + 1
+    frac = x.shape[0] // x_pos.shape[0]
     print(frac)
     resampled_data = []
     for i in range(frac):
