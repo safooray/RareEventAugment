@@ -9,7 +9,7 @@ from tensorflow.keras import optimizers, Sequential
 from tensorflow.keras.models import Model
 from tensorflow.keras.metrics import FalseNegatives, FalsePositives, TruePositives, TrueNegatives, Recall 
 from tensorflow.keras.utils import plot_model
-from tensorflow.keras.layers import Dense, LSTM, RepeatVector, TimeDistributed
+from tensorflow.keras.layers import Dense, GRU, RepeatVector, TimeDistributed
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 """### Load Data"""
 
@@ -22,7 +22,7 @@ data = pd.read_excel(data_file, 'data-(b)-4-min-ahead-conse-rmvd')
 SEED = 0
 DATA_SPLIT_PCT = 0.10
 label_name = 'y-4min-ahead'
-LOOKBACK=15
+LOOKBACK=20
 
 data = data.drop(['time', 'x28', 'x61'], axis=1)
 
@@ -46,7 +46,7 @@ X_test = X_test.reshape(X_test.shape[0], LOOKBACK, n_features)
 print(X_train.shape, y_train.shape)
 
 X_train, y_train = resample_augment(X_train, y_train)
-X_train, y_train = shuffle(X_train, y_train)
+X_train, y_train = shuffle(X_train, y_train, random_state=SEED)
 print(X_train.shape, y_train.shape)
 
 scaler = StandardScaler().fit(flatten(X_train))
@@ -57,12 +57,12 @@ X_test_scaled = scale(X_test, scaler)
 print(X_train.shape, y_train.shape)
 
 epochs = 200
-batch = 64
-lr = 0.001
+batch = 128
+lr = 0.0001
 
 lstm_model = Sequential()
-lstm_model.add(LSTM(units=128, activation='relu', return_sequences=False,
-               dropout = 0.9, recurrent_dropout=0.5, input_shape=(LOOKBACK, n_features)))
+lstm_model.add(GRU(units=128, activation='relu', return_sequences=False,
+               dropout = 0.5, recurrent_dropout=0.5, input_shape=(LOOKBACK, n_features)))
 #lstm_model.add(LSTM(units=256, activation='relu', return_sequences=False))
 lstm_model.add(Dense(1, activation='sigmoid'))
 lstm_model.compile(loss='binary_crossentropy', optimizer=optimizers.Adam(lr=lr),
