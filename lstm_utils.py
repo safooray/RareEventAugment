@@ -1,14 +1,16 @@
+import numpy as np
+
 def temporalize(X, y, lookback):
-    X = []
-    y = []
-    for i in range(len(input_X)-lookback-1):
+    out_X = []
+    out_y = []
+    for i in range(len(X)-lookback-1):
         t = []
         for j in range(1,lookback+1):
             # Gather past records upto the lookback period
-            t.append(input_X[[(i+j+1)], :])
-        X.append(t)
-        y.append(input_y[i+lookback+1])
-    return X, y
+            t.append(X[[(i+j+1)], :])
+        out_X.append(t)
+        out_y.append(y[i+lookback+1])
+    return out_X, out_y
 
 def flatten(X):
     '''
