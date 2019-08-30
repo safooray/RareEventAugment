@@ -15,7 +15,7 @@ from sklearn.utils import shuffle
 import pandas as pd
 import numpy as np
 
-AUGMENT = 'YES'
+AUGMENT = 'RESAMP'
 """## Helper Methods"""
 
 def scale_datasets(scaler, train_set, to_scale):
@@ -62,13 +62,34 @@ if AUGMENT == 'NO':
     y_hat_train = classifier.predict(train_x_scaled)
     train_res = precision_recall_fscore_support(train_y, y_hat_train)
 
+if AUGMENT == 'GRAD':
+    augmented_train_x, augmented_train_y = gradient_augment(train_x_scaled, train_y)
+    augmented_train_x_rescaled, augmented_train_y = shuffle(augmented_train_x, augmented_train_y)
+
+    classifier.fit(augmented_train_x_rescaled, augmented_train_y)
+    y_hat_train = classifier.predict(augmented_train_x_rescaled)
+    train_res = precision_recall_fscore_support(augmented_train_y, y_hat_train, average='binary')
+    zeros = np.zeros(shape=test_x_scaled.shape)
+    test_x_scaled = np.concatenate([test_x_scaled, zeros], axis=1)
+
+if AUGMENT == 'GRADRESAMP':
+    augmented_train_x, augmented_train_y = gradient_augment(train_x_scaled, train_y)
+    augmented_train_x, augmented_train_y = resample_augment(augmented_train_x, augmented_train_y)
+    augmented_train_x, augmented_train_y = shuffle(augmented_train_x, augmented_train_y)
+    augmented_train_x_rescaled = scale_datasets(StandardScaler, augmented_train_x, [augmented_train_x])[0]
+    classifier.fit(augmented_train_x_rescaled, augmented_train_y)
+    y_hat_train = classifier.predict(augmented_train_x_rescaled)
+    train_res = precision_recall_fscore_support(augmented_train_y, y_hat_train, average='binary')
+    zeros = np.zeros(shape=test_x_scaled.shape)
+    test_x_scaled = np.concatenate([test_x_scaled, zeros], axis=1)
+
+
 else:
     augmented_train_x, augmented_train_y = resample_augment(df_train_x, train_y)
 
-    #augmented_train_x_rescaled = scale_datasets(StandardScaler, augmented_train_x, [augmented_train_x])[0]
+    augmented_train_x_rescaled = scale_datasets(StandardScaler, augmented_train_x, [augmented_train_x])[0]
 
     augmented_train_x_rescaled, test_x_scaled = scale_datasets(StandardScaler, augmented_train_x, [augmented_train_x, df_test_x])
-    augmented_train_x_rescaled, augmented_train_y = shuffle(augmented_train_x_rescaled, augmented_train_y)
     classifier.fit(augmented_train_x_rescaled, augmented_train_y)
     y_hat_train = classifier.predict(augmented_train_x_rescaled)
     train_res = precision_recall_fscore_support(augmented_train_y, y_hat_train, average='binary')
