@@ -24,3 +24,22 @@ def resample_augment(x, y):
     augmented_x = np.concatenate([x, resampled_data], axis=0)
     augmented_y = np.concatenate([y, np.ones(shape=resampled_data.shape[0])], axis=0)
     return augmented_x, augmented_y
+
+def gradient_augment(x, y):
+    x_grad = np.gradient(x, axis=0)
+    print(x.shape, x_grad.shape)
+    augmented_x = np.concatenate([x, x_grad], axis=1)
+    print(augmented_x.shape)
+    return augmented_x, y
+
+
+def interpolation_augment(x, y):
+    pass
+
+
+from data_utils import prepare_data
+if __name__ == '__main__':
+    x, y = prepare_data()
+    print(x.shape, y.shape)
+    x, y = gradient_augment(x, y)
+    print(x.shape, y.shape)
