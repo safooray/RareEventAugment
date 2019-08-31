@@ -60,19 +60,18 @@ train_x_scaled, test_x_scaled = scale_datasets(StandardScaler, df_train_x, [df_t
 if AUGMENT == 'NO':
     classifier.fit(train_x_scaled, train_y)
     y_hat_train = classifier.predict(train_x_scaled)
-    train_res = precision_recall_fscore_support(train_y, y_hat_train)
+    train_res = precision_recall_fscore_support(train_y, y_hat_train, average='binary')
 
-if AUGMENT == 'GRAD':
+elif AUGMENT == 'GRAD':
     augmented_train_x, augmented_train_y = gradient_augment(train_x_scaled, train_y)
     augmented_train_x_rescaled, augmented_train_y = shuffle(augmented_train_x, augmented_train_y)
 
     classifier.fit(augmented_train_x_rescaled, augmented_train_y)
     y_hat_train = classifier.predict(augmented_train_x_rescaled)
     train_res = precision_recall_fscore_support(augmented_train_y, y_hat_train, average='binary')
-    zeros = np.zeros(shape=test_x_scaled.shape)
-    test_x_scaled = np.concatenate([test_x_scaled, zeros], axis=1)
+    test_x_scaled, _ = gradient_augment(test_x_scaled, test_y)
 
-if AUGMENT == 'GRADRESAMP':
+elif AUGMENT == 'GRADRESAMP':
     augmented_train_x, augmented_train_y = gradient_augment(train_x_scaled, train_y)
     augmented_train_x, augmented_train_y = resample_augment(augmented_train_x, augmented_train_y)
     augmented_train_x, augmented_train_y = shuffle(augmented_train_x, augmented_train_y)
@@ -80,9 +79,7 @@ if AUGMENT == 'GRADRESAMP':
     classifier.fit(augmented_train_x_rescaled, augmented_train_y)
     y_hat_train = classifier.predict(augmented_train_x_rescaled)
     train_res = precision_recall_fscore_support(augmented_train_y, y_hat_train, average='binary')
-    zeros = np.zeros(shape=test_x_scaled.shape)
-    test_x_scaled = np.concatenate([test_x_scaled, zeros], axis=1)
-
+    test_x_scaled, _ = gradient_augment(test_x_scaled, test_y)
 
 else:
     augmented_train_x, augmented_train_y = resample_augment(df_train_x, train_y)
