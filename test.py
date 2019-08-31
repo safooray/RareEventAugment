@@ -1,5 +1,6 @@
 from absl import flags 
 from absl import app
+from augmentation import gradient_augment
 from data_utils import prepare_data
 import numpy as np
 import pickle
@@ -24,13 +25,14 @@ FLAGS = flags.FLAGS
 LOOKBACK = 20
 
 def main(argv):
-    X_test, y_test = prepare_data(data_path=FLAGS.data_path,
+    X, y = prepare_data(data_path=FLAGS.data_path,
                                   sheet_name=FLAGS.sheet_name, 
                                   label_name=FLAGS.label_name)
 
-    n_features = X_test.shape[1]
-
-    X_test, y_test = temporalize(X_test, y_test, LOOKBACK)
+    n_features = X.shape[1]
+    X, y = gradient_augment(X, y)
+    X, y = temporalize(X, y, LOOKBACK)
+    _, X_test, _, y_test = train_test_split(np.array(X), np.array(y), test_size=DATA_SPLIT_PCT, random_state=0)
     X_test = np.array(X_test)
     X_test = X_test.reshape(X_test.shape[0], LOOKBACK, n_features)
 
