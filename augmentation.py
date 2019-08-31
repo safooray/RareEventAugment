@@ -1,7 +1,6 @@
 import numpy as np
 
 
-"""## Data augmentation by adding noise."""
 def noise_pos_augment(x, y):
     x_pos = x[y == 1]
 
@@ -12,7 +11,6 @@ def noise_pos_augment(x, y):
     augmented_x = np.concatenate([x, data_with_noise], axis=0)
     augmented_y = np.concatenate([y, np.ones(shape=x_pos.shape[0])], axis=0)
     return augmented_x, augmented_y
-
 
 def resample_augment(x, y):
     x_pos = x[y == 1]
@@ -25,11 +23,13 @@ def resample_augment(x, y):
     augmented_y = np.concatenate([y, np.ones(shape=resampled_data.shape[0])], axis=0)
     return augmented_x, augmented_y
 
-def gradient_augment(x, y):
+def gradient_augment(x, y, order=2):
     x_grad = np.gradient(x, axis=0)
-    print(x.shape, x_grad.shape)
-    augmented_x = np.concatenate([x, x_grad], axis=1)
-    print(augmented_x.shape)
+    x_2nd_grad = np.gradient(x_grad, axis=0)
+    if order == 1:
+        augmented_x = np.concatenate([x, x_grad], axis=1)
+    if order == 2:
+        augmented_x = np.concatenate([x, x_grad, x_2nd_grad], axis=1)
     return augmented_x, y
 
 
