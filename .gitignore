@@ -1,2 +1,5 @@
 data/
 logs/
+*.ker
+*.pickle
+__pycache__/
