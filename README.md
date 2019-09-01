@@ -40,27 +40,29 @@ Both of these approaches increase the overall gradient size resulting from posit
 
 ### Feature Engineering
 
-Based on communications with challenge organizers, any transformation to the data is allowed in this challenge, therefore I "augmented" the data by adding several new features to the set of features. I used the first order gradients of the sensor outputs with respect to time as features, doubling the number of features. These features are meant to provide the predictive model with insights into the speed of change in sensor values, a concept that might take a lot of data and training for a model to learn on itself.
+I augmented the data by adding several new features to the set of features. I used the first order gradients of the sensor outputs with respect to time as features, doubling the number of features. These features are meant to provide the predictive model with insights into the speed of change in sensor values, a concept that might take a lot of data and training for a model to learn on itself.
 
 After achieving positive results, I added second order gradients to the feature set as well, observing even more improvement.
 
 ### Feature Learning
 
-I used recurrent neural networks with LSTM and GRU cells to learn time-aware features. LSTMs are recurrent neural networks designed to address the vanishing gradient problem in general RNN by their sophisticated gating mechanisms, and learn relatively longer term relationships in a sequence. GRU improve upon LSTM in terms of both simplifying it and in terms of empirical results. As expected, GRUs had better results in this problem as well. 
+I used recurrent neural networks with GRU cells to learn time-aware features. I use sequences of length 20 to train GRU models, and use the representation learned by the model to transform the test data.
 
-  
 
-I use sequences of length 20 to train GRU models, and use the representation learned by the model to transform the test data.
-
-  
 
 ### Submitted Code
 
-The code of the solution can be found at [this Github repository](https://github.com/safooray/RareEventAugment).
-
-The provided repository contains a test.py script that expects the following flags:
-
-  
+This repository contains a test.py script that expects the following flags:
+ 
+ - data_path: path to test data.
+ 
+ - sheet name: if the data file is a multi-sheet excel file, provide sheet name here.
+ 
+ - label name: Name of label column in data file.
+ 
+ - data_scaler_path: path to pickled Scaler object created based on training data.
+ 
+ - final_model_path: path to final Keras model learned from training data to transform the test data.
 
 The script does the following:
 
