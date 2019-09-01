@@ -12,7 +12,7 @@ First off, the categorical and binary features are removed from the data. 
 
   
 
-Since the problem is one of predicting if an event will happen in 4 minutes and not whether the event has already happened, I changed the labels of 2 and 4 minutes before any event (positive sample) to positive, and then removed the positive sample itself.
+Since the problem is one of predicting if an event will happen in 4 minutes and not whether the event has already happened, I changed the labels of 2 and 4 minutes before any event (positive sample) to positive, and then removed the positive sample itself. This leaves us with 18274 samples, 247 of which are positive.
 
   
 
